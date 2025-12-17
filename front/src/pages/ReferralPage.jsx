@@ -6,7 +6,7 @@ import "./ReferralPage.css";
 // CONFIG
 // =============================
 const API_BASE = "https://cryptoocapitalhub.com/api";
-const BOT_USERNAME = "@pooooooooooobot"; // ← یوزرنیم ربات تلگرام
+const BOT_USERNAME = "pooooooooooobot"; // ← یوزرنیم ربات تلگرام بدون @
 const APP_BASE_URL = "https://cryptoocapitalhub.com"; // ← لینک Mini App
 
 export default function ReferralPage() {
@@ -84,14 +84,21 @@ export default function ReferralPage() {
   };
 
   // -----------------------------
-  // Share in Telegram
+  // Share in Telegram (FIXED)
   // -----------------------------
   function shareInTelegram() {
-    if (!tg || !myLinkTelegram) return;
+    if (!myLinkTelegram) return;
 
     const text = "🚀 Join this app using my personal referral link and get bonus rewards!";
     const url = `https://t.me/share/url?url=${encodeURIComponent(myLinkTelegram)}&text=${encodeURIComponent(text)}`;
-    tg.openTelegramLink(url);
+
+    // اگر WebApp تلگرام موجود است، از tg.openLink استفاده کن
+    if (tg && tg.openLink) {
+      tg.openLink(url);
+    } else {
+      // fallback: باز کردن لینک در پنجره جدید مرورگر
+      window.open(url, "_blank");
+    }
   }
 
   // =============================
@@ -117,6 +124,7 @@ export default function ReferralPage() {
 
                 <div className="ref-link-inner">
                   <p>Telegram: <code>{myLinkTelegram}</code></p>
+                  <p>Browser: <code>{myLinkBrowser}</code></p>
                 </div>
 
                 <button
