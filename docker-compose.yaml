@@ -41,7 +41,7 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   telegram-bot:
-    build: ./telegram-bot    # دایرکتوری Node.js بات
+    build: ./telegram-bot-server    # دایرکتوری Node.js بات
     container_name: telegram-bot
     restart: always
     environment:
