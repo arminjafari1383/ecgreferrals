@@ -1,26 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 
 import logo from "../../assets/chart.jpg";
 import "./PurchasePage.css";
 
-// ===============================
-// ⭐ آدرس کیف پول پروژه (TON)
-// ===============================
 const PROJECT_TON_WALLET =
   "UQBnIrZ0TjM-iL0nowg7p9mDrO3Ge4E0_HSTSaB3xf5uKdE8";
 
-// ===============================
-// ⭐ TON → nanoTON
-// ===============================
 function toNanoTON(amount) {
   return Math.floor(Number(amount) * 1e9).toString();
 }
 
-// ===============================
-// ⭐ ساخت تراکنش TON
-// ===============================
 function buildTONTransfer(amountTON) {
   return {
     validUntil: Math.floor(Date.now() / 1000) + 300,
@@ -33,9 +24,6 @@ function buildTONTransfer(amountTON) {
   };
 }
 
-// ===============================
-// ⭐ صفحه خرید
-// ===============================
 export default function PurchasePage() {
   const navigate = useNavigate();
   const tonWallet = useTonWallet();
@@ -43,14 +31,32 @@ export default function PurchasePage() {
 
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [tonPrice, setTonPrice] = useState(null);
 
-  // نرخ تبدیل نمونه
-  const ECG_RATE = 900; // 1 TON = 900 ECG
-  const equivalentECG = (Number(amount) * ECG_RATE || 0).toFixed(2);
+  // دریافت قیمت TON به USDT
+  useEffect(() => {
+    async function fetchTonPrice() {
+      try {
+        const res = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=the-open-network&vs_currencies=usd"
+        );
+        const data = await res.json();
+        setTonPrice(data["the-open-network"].usd);
+      } catch (err) {
+        console.error("TON price error:", err);
+      }
+    }
+    fetchTonPrice();
+  }, []);
 
-  // ===============================
-  // ⭐ انجام پرداخت با TON
-  // ===============================
+  // ⭐ 1 USDT = 200 ECG
+  const ECG_PER_USDT = 200;
+
+  const equivalentECG =
+    tonPrice && amount
+      ? (Number(amount) * tonPrice * ECG_PER_USDT).toFixed(2)
+      : "0.00";
+
   async function handleDeposit() {
     try {
       if (!tonWallet) {
@@ -64,21 +70,19 @@ export default function PurchasePage() {
       setMessage("⏳ Sending TON transaction...");
 
       const tx = buildTONTransfer(amount);
-
       await tonConnectUI.sendTransaction(tx);
 
       setMessage("✅ TON payment sent successfully!");
     } catch (err) {
-      console.error("❌ TON Payment Error:", err);
-      setMessage("❌ Transaction rejected or failed.");
+      console.error(err);
+      setMessage("❌ Transaction failed.");
     }
   }
 
   return (
     <div className="page-container">
       <button onClick={() => navigate(-1)} className="back-btn">
-        <div className="back-circle">←</div>
-        <span>Back</span>
+        ← Back
       </button>
 
       <h2 className="title">Stake (Deposit)</h2>
@@ -86,6 +90,12 @@ export default function PurchasePage() {
       <div className="logo-box">
         <img src={logo} alt="chart" className="logo-img" />
       </div>
+
+      {tonPrice && (
+        <p className="price-box">
+          TON Price: ${tonPrice} USDT
+        </p>
+      )}
 
       <p className="label-text">You Pay (TON)</p>
       <input
