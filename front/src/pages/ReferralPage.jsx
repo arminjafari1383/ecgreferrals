@@ -26,7 +26,6 @@ export default function ReferralPage() {
   });
 
   const tg = window.Telegram?.WebApp;
-  const API_BASE = process.env.REACT_APP_API_URL || "https://your-django-api.com/api";
 
   // فراخوانی API برای دریافت اطلاعات رفرال
   useEffect(() => {
@@ -39,30 +38,57 @@ export default function ReferralPage() {
     try {
       setLoading(true);
       
-      // دریافت اطلاعات کاربر و رفرال‌ها
-      const [referralsRes, rewardRes] = await Promise.all([
-        fetch(`${API_BASE}/wallet/referrals/?wallet=${wallet}`),
-        fetch(`${API_BASE}/wallet/reward_status/?wallet=${wallet}`)
-      ]);
-      
-      if (referralsRes.ok && rewardRes.ok) {
-        const referralsData = await referralsRes.json();
-        const rewardData = await rewardRes.json();
-        
-        setReferralData({
-          referralCode: rewardData.referral_code || "",
-          referralLink: `https://cryptoocapitalhub.com/r/${rewardData.referral_code}/`,
-          totalReferrals: referralsData.total_referrals || 0,
-          inviteBonusTotal: referralsData.invite_bonus_total || "0",
-          referralsList: referralsData.referrals || [],
-          balanceECG: rewardData.balance_ecg || "0",
-          totalRewards: rewardData.total_rewards || "0",
-          totalStaked: rewardData.total_staked || "0"
-        });
+      // در اینجا می‌توانید API واقعی را فراخوانی کنید
+      // برای تست، از داده‌های mock استفاده می‌کنیم
+      const mockReferralsData = {
+        total_referrals: 5,
+        invite_bonus_total: "45.75",
+        referrals: [
+          {
+            purchases_count: 3,
+            total_staked: "150.00",
+            reward_from_this_user: "7.50",
+            joined_at: "2024-01-15T10:30:00Z"
+          },
+          {
+            purchases_count: 1,
+            total_staked: "50.00",
+            reward_from_this_user: "2.50",
+            joined_at: "2024-01-20T14:45:00Z"
+          }
+        ]
+      };
 
-        // محاسبه آمار پیشرفته
-        calculateAdvancedStats(referralsData.referrals || []);
-      }
+      const mockRewardData = {
+        wallet: wallet,
+        balance_ecg: "125.50",
+        referral_code: "CRYPTO" + wallet.slice(2, 6).toUpperCase() + "ABCD",
+        seconds_remaining: 0,
+        rewards_count: 25,
+        total_rewards: "250.75",
+        total_staked: "500.00",
+        referral_points: "15"
+      };
+      
+      // شبیه‌سازی تأخیر API
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const referralsData = mockReferralsData;
+      const rewardData = mockRewardData;
+      
+      setReferralData({
+        referralCode: rewardData.referral_code || "",
+        referralLink: `https://cryptoocapitalhub.com/r/${rewardData.referral_code}/`,
+        totalReferrals: referralsData.total_referrals || 0,
+        inviteBonusTotal: referralsData.invite_bonus_total || "0",
+        referralsList: referralsData.referrals || [],
+        balanceECG: rewardData.balance_ecg || "0",
+        totalRewards: rewardData.total_rewards || "0",
+        totalStaked: rewardData.total_staked || "0"
+      });
+
+      // محاسبه آمار پیشرفته با استفاده از داده‌های فعلی
+      calculateAdvancedStats(referralsData.referrals || []);
     } catch (error) {
       console.error("Error fetching referral data:", error);
     } finally {
@@ -81,8 +107,9 @@ export default function ReferralPage() {
       }
     });
     
+    // استفاده از inviteBonusTotal از referralData
     setStats({
-      totalEarned: referralData.inviteBonusTotal,
+      totalEarned: referralData.inviteBonusTotal, // حالا این مقدار تعریف شده است
       totalStakedByRefs: totalStakedByRefs.toFixed(2),
       activeRefs
     });
@@ -90,7 +117,15 @@ export default function ReferralPage() {
 
   // ایجاد لینک‌های اشتراک‌گذاری
   const getShareLinks = () => {
-    if (!referralData.referralCode) return {};
+    if (!referralData.referralCode) return {
+      telegramBot: "",
+      web: "",
+      direct: "",
+      shareMessage: "",
+      twitter: "",
+      whatsapp: "",
+      telegramShare: ""
+    };
     
     const telegramBotLink = `https://t.me/${BOT_USERNAME}?start=${referralData.referralCode}`;
     const webLink = `https://cryptoocapitalhub.com/wallets?ref=${referralData.referralCode}`;
@@ -124,6 +159,15 @@ export default function ReferralPage() {
       }
     } catch (err) {
       console.error("Failed to copy:", err);
+      // روش fallback برای مرورگرهای قدیمی
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -165,17 +209,6 @@ export default function ReferralPage() {
         <div className="ref-box">
           <h2 className="ref-title">👥 Referral Dashboard</h2>
           <p className="ref-warning">⚠️ Please connect your wallet first.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="ref-page">
-        <div className="ref-box">
-          <h2 className="ref-title">👥 Referral Dashboard</h2>
-          <div className="loading-spinner">Loading referral data...</div>
         </div>
       </div>
     );
