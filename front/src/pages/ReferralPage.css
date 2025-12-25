@@ -226,3 +226,197 @@
     font-size: 2rem;
   }
 }
+
+/* ReferralPage.css - بخش‌های اضافی */
+
+.ref-stats {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.ref-code-display {
+  background: rgb(96, 207, 96);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0;
+  border: 2px solid #e0e0e0;
+}
+
+.ref-code {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ref-code code {
+  flex: 1;
+  background: rgb(96, 207, 96);
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-family: monospace;
+  font-size: 16px;
+  word-break: break-all;
+}
+
+.copy-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s;
+  white-space: nowrap;
+}
+
+.copy-btn:hover {
+  background: #45a049;
+}
+
+.ref-link-section {
+  margin: 15px 0;
+}
+
+.ref-link-section label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #555;
+}
+
+.link-input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.link-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 14px;
+  background: rgb(96, 207, 96);
+}
+
+.share-buttons {
+  margin-top: 25px;
+}
+
+.share-buttons h4 {
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.button-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.share-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.telegram-btn {
+  background: #0088cc;
+  color: white;
+}
+
+.share-telegram-btn {
+  background: #2AABEE;
+  color: white;
+}
+
+.twitter-btn {
+  background: #1DA1F2;
+  color: white;
+}
+
+.whatsapp-btn {
+  background: #25D366;
+  color: white;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ref-instructions {
+  background: rgb(96, 207, 96);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 20px;
+  border-left: 4px solid #4CAF50;
+}
+
+.ref-instructions h4 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.ref-instructions ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.ref-instructions li {
+  margin: 5px 0;
+  color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .ref-stats {
+    flex-direction: column;
+  }
+  
+  .button-group {
+    grid-template-columns: 1fr;
+  }
+  
+  .ref-code {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .copy-btn {
+    width: 100%;
+  }
+}
