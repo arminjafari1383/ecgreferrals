@@ -4,7 +4,7 @@ import { TonConnectButton, useTonWallet, useTonConnectUI } from "@tonconnect/ui-
 import "./WalletPage.css";
 
 
-const API_BASE = "https://cryptoocapitalhub.com/api";
+const API_BASE = "http://localhost:8000/api";
 
 
 async function registerWallet(address, networkType) {

@@ -1,6 +1,8 @@
-from django.urls import path, include
+# backend/referral/urls.py
+from django.urls import path,include
 from rest_framework.routers import DefaultRouter
-from .views import WalletViewSet, referral_redirect
+from . import views
+from .views import *
 
 router = DefaultRouter()
 router.register(r'wallet', WalletViewSet, basename='wallet')

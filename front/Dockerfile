@@ -21,7 +21,7 @@ RUN rm -rf /usr/share/nginx/html/*
 # کپی کردن خروجی build به مسیر Nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 # برای React معمولاً پوشه build است:
-# COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html
 
 # قرار دادن فایل کانفیگ اختصاصی (اختیاری)
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
