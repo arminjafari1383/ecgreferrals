@@ -3,7 +3,7 @@ import { useWallet } from "../context/WalletContext";
 import { useLocation } from "react-router-dom";
 import "./ReferralPage.css";
 
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = "https://cryptoocapitalhub.com/api";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
