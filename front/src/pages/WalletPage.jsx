@@ -3,20 +3,16 @@ import { useWallet } from "../context/WalletContext";
 import { TonConnectButton, useTonWallet, useTonConnectUI } from "@tonconnect/ui-react";
 import "./WalletPage.css";
 
-
 const API_BASE = "http://localhost:8000/api";
 
-
-async function registerWallet(address, networkType) {
+async function registerWallet(address, networkType, referralCode) {
   try {
-    const ref = localStorage.getItem("referral_code") || "";
-
     const res = await fetch(`${API_BASE}/wallet/connect/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         wallet_address: address,
-        referral_code: ref,
+        referral_code: referralCode,  // ارسال کد رفرال وارد شده توسط کاربر
         network: networkType,
       }),
     });
@@ -37,27 +33,27 @@ async function registerWallet(address, networkType) {
   }
 }
 
-
-
 export default function WalletPage() {
   const [message, setMessage] = useState("");
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawAddress, setWithdrawAddress] = useState("");
+  const [referralCode, setReferralCode] = useState("");  // فیلد جدید برای کد رفرال
   const { setTonWallet, network, wallet: activeWalletAddress } = useWallet();
   const tonWallet = useTonWallet();
   const [tonConnectUI] = useTonConnectUI();
 
-
-
+  // -------------------------------
+  // استخراج کد رفرال از URL و ذخیره در localStorage
+  // -------------------------------
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const ref = params.get("ref");
     if (ref) {
       localStorage.setItem("referral_code", ref);
+      console.log("📌 Referral code from URL:", ref);
     }
   }, []);
-
 
   useEffect(() => {
     const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
@@ -68,7 +64,7 @@ export default function WalletPage() {
 
         (async () => {
           setMessage("📡 Registering TON wallet...");
-          const msg = await registerWallet(address, "ton");
+          const msg = await registerWallet(address, "ton", referralCode);  // ارسال کد رفرال وارد شده
           setMessage(msg);
         })();
       } else {
@@ -78,10 +74,11 @@ export default function WalletPage() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [referralCode]);  // اضافه کردن وابستگی به `referralCode`
 
-
-
+  // -------------------------------
+  // ارسال درخواست برداشت
+  // -------------------------------
   async function handleWithdraw() {
     if (!withdrawAmount || Number(withdrawAmount) < 60)
       return setMessage("⚠️ Minimum withdrawal is 60 ECG.");
@@ -122,17 +119,25 @@ export default function WalletPage() {
     setWithdrawAddress("");
   }
 
-
-
   return (
     <div className="wallet-page-container">
       <div className="wallet-box">
-        <h2 className="wallet-title">connect Wallet</h2>
-
+        <h2 className="wallet-title">Connect Wallet</h2>
         <TonConnectButton />
 
-
         {message && <p className="msg-box">{message}</p>}
+
+        {/* فیلد برای وارد کردن کد رفرال دستی */}
+        <div className="referral-input-container">
+          <label htmlFor="referralCode">Enter Referral Code:</label>
+          <input
+            type="text"
+            id="referralCode"
+            value={referralCode}
+            onChange={(e) => setReferralCode(e.target.value)}  // ذخیره کد رفرال وارد شده
+            className="referral-input"
+          />
+        </div>
 
         {activeWalletAddress && (
           <button

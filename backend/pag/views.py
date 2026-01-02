@@ -37,6 +37,7 @@ class WalletViewSet(viewsets.ViewSet):
             user, created = WalletUser.objects.get_or_create(wallet_address=wallet_address)
 
             response_data = {
+                'status':'ok',
                 'wallet_address': user.wallet_address,
                 'referral_code': user.referral_code,
                 'is_new': created,
